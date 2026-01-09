@@ -1,0 +1,7 @@
+# Procfile
+web: gunicorn --bind 0.0.0.0:$PORT api_server:app
+# 解释: 
+# web: 告诉 Render 这是一个 Web 服务
+# gunicorn: 启动 Gunicorn
+# --bind 0.0.0.0:$PORT: 绑定到 Render 分配的端口
+# api_server:app: 引用 api_server.py 文件中的 Flask 实例 'app'
