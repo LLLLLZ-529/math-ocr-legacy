@@ -1,87 +1,52 @@
-# 手写数学公式识别 (Handwritten Mathematical Formula Recognition)
+# -coze- · 手写公式识别 API（早期部署版）
 
-这是一个基于深度学习的手写数学公式识别项目。该项目旨在将手写的数学公式图像转化为相应的 LaTeX 代码或 MathML 格式。
+手写数学公式识别的 **Flask API 服务**：接收图片 URL，返回 LaTeX 识别结果。
 
-## 📋 目录
-- [简介](#简介)
-- [环境依赖](#环境依赖)
-- [数据集](#数据集)
-- [快速开始](#快速开始)
-- [训练](#训练)
-- [测试与评估](#测试与评估)
-- [结果展示](#结果展示)
+> ⚠️ **建议归档本仓库**：本项目与 `math-ocr-api`、`Handwritten-mathematical-formula-recognition` 内容高度重复（同一套模型代码），且 `math-ocr-api` 代码更规范。保留一个 API 仓库即可。
 
-## 📖 简介
-本项目使用 [请在此处填写模型名称，例如：Encoder-Decoder with Attention] 架构来实现端到端的公式识别。
-主要特性：
-- 支持不定长公式序列识别
-- 输出标准的 LaTeX 语法
-- 如果有预训练模型，可直接进行推理
+## ✨ 功能特性
 
-## 📦 环境依赖
+- 🌐 `POST /recognize`：传入 `{"image": "图片URL"}`，服务端下载图片并识别
+- 📝 返回 LaTeX 序列（JSON）
+- 🧠 Encoder-Decoder 模型（DenseNet + GRU + Attention）
+- 🎯 针对 **RTX 5090** 做了 CUDA 优化（cudnn.benchmark；无 GPU 时自动降级 CPU）
+- 🔤 词表从 `dictionary.txt` 加载（112 tokens）
 
-请确保您的环境满足以下要求：
-
-- Python >= 3.6
-- PyTorch >= 1.7
-- CUDA (如果需要 GPU 训练)
-
-安装依赖包：
-```bash
-pip install -r requirements.txt
-```
-
-## 💾 数据集
-
-本项目通常使用 **CROHME** (Competition on Recognition of Online Handwritten Mathematical Expressions) 数据集或类似格式的数据。
-
-1. **下载数据**：请下载 CROHME 数据集或准备自己的数据。
-2. **数据预处理**：
-   将数据解压到 `data/` 目录下。
-   运行预处理脚本（如果有）：
-   ```bash
-   python preprocess.py --data_path ./data/
-   ```
-   *注意：请根据实际的数据路径修改配置。*
-
-## 🚀 快速开始 (Inference)
-
-如果你已经下载了预训练模型，可以使用 `inference.py` 进行单张图片的测试。
+## 🚀 快速开始
 
 ```bash
-python inference.py --image_path ./test_images/sample.png --model_path ./checkpoints/best_model.pth
+pip install flask torch torchvision pillow requests
+python api_server.py
 ```
 
-## 🏋️‍♂️ 训练
-
-配置好 `config.yaml` 或相关参数后，运行以下命令开始训练：
+### 调用
 
 ```bash
-python train.py --config config.yaml
+curl -X POST http://localhost:5000/recognize \
+  -H "Content-Type: application/json" \
+  -d '{"image": "https://example.com/formula.png"}'
 ```
 
-**参数说明**：
-- `--batch_size`: 批大小
-- `--epoch`: 训练轮数
-- `--lr`: 学习率
+## 📁 项目结构
 
-## 📊 测试与评估
-
-在测试集上评估模型性能（如计算 BLEU score 或 Expression Match rate）：
-
-```bash
-python eval.py --model_path ./checkpoints/best_model.pth --dataset test
+```
+-coze-/
+├── api_server.py       # Flask 入口与识别逻辑
+├── encoder.py          # DenseNet 编码器
+├── decoder.py          # GRU 解码器
+├── encoder_decoder.py  # 模型封装
+├── dictionary.txt      # 词表
+├── requirements.txt    # 依赖
+├── Procflie            # ⚠️ 文件名拼写错误（应为 Procfile）
+└── README.md
 ```
 
-## 📝 结果展示
+## ⚠️ 已知问题
 
-| 输入图片 | 识别结果 (LaTeX) |
-| :---: | :--- |
-| <img src="docs/sample1.png" width="200"> | `x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}` |
-| <img src="docs/sample2.png" width="200"> | `\int_{0}^{\infty} e^{-x^2} dx` |
+1. **`Procflie` 拼写错误**：Render 等平台要求文件名是 `Procfile`，拼错会导致启动失败，请重命名。
+2. **模型权重缺失**：代码加载 `model_weights.pkl`，仓库未包含，需自行放入。
+3. **与 `math-ocr-api` 重复**：建议本仓库归档/删除，主页上保留主项目 + `math-ocr-api` 即可。
 
-## 🤝 贡献
-欢迎提交 Issue 或 Pull Request 来改进本项目。
+## 📄 许可
 
-## 📄 许可证
-[MIT License](LICENSE)
+未指定开源许可（默认保留所有权利）。
