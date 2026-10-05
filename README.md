@@ -1,4 +1,4 @@
-适用于coze的手写公式识别 API
+## 适用于coze的手写公式识别 API
 
 手写数学公式识别的 **Flask API 服务**：接收图片 URL，返回 LaTeX 识别结果。
 
