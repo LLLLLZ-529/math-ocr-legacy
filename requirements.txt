@@ -1,1 +1,8 @@
-35NM99XvqWe7sqvJl0qYXowTT2o_6s8fRRMf7iNm5uEuHijPa
+# -coze- 部署依赖
+# 参考 api_server.py 实际导入的库
+flask>=2.2.0
+requests>=2.28.0
+torch>=1.13.0
+torchvision>=0.14.0
+Pillow>=9.0.0
+gunicorn>=20.1.0
